@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanzhu.platform.mapper.TagMapper">
+
+    <select id="selectListByNewsId" resultType="com.shanzhu.platform.entity.Tag">
+        SELECT tag_name
+        FROM t_tag a,t_news_tag b
+        WHERE a.id = b.tag_id
+        AND b.news_id = #{id}
+    </select>
+    <select id="listNewsByTagId" resultType="com.shanzhu.platform.entity.vo.NewsInfoVo">
+        SELECT a.id , a.title,a.cover ,a.summary,a.goods ,c.user_name,c.avatar,a.gmt_create ,a.gmt_modified
+        FROM  t_news a,t_news_tag b,sys_user c
+        WHERE a.id = b.news_id
+        AND a.user_id = c.id
+        AND a.status = 1
+        AND b.tag_id = #{reqDTO.id}
+        limit #{reqDTO.current} ,#{reqDTO.limit}
+    </select>
+    <select id="listNewsTotalByTagId" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM  t_news a,t_news_tag b
+        WHERE a.id = b.news_id
+        AND a.status = 1
+        AND b.tag_id = #{reqDTO.id}
+    </select>
+</mapper>

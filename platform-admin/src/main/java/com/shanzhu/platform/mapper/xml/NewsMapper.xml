@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shanzhu.platform.mapper.NewsMapper">
+
+
+<!--    通过标题 摘要 用户昵称 查询并分页-->
+    <select id="selectNewsPageListByWord" resultType="com.shanzhu.platform.entity.vo.NewsInfoVo">
+
+        SELECT a.id , a.title,a.cover ,a.summary,a.goods ,b.user_name,b.avatar,a.gmt_create ,a.gmt_modified
+        FROM  t_news a,sys_user b
+        <where>
+            a.user_id = b.id
+            <if test="reqDTO.title !=null">
+            and a.title = concat('%', #{reqDTO.title}, '%')
+            </if>
+            <if test="reqDTO.userName != null">
+            and b.user_name = concat('%', #{reqDTO.userName}, '%')
+            </if>
+            <if test="reqDTO.summary != null">
+            and a.summary = concat('%', #{reqDTO.summary}, '%')
+            </if>
+            <if test="reqDTO.status != null">
+                and  a.status = #{reqDTO.status}
+            </if>
+        </where>
+        limit #{reqDTO.current}, #{reqDTO.limit}
+    </select>
+    <select id="selectNewsPageListByWordTotal" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM  t_news a,sys_user b
+        <where>
+            a.user_id = b.id
+            <if test="reqDTO.title !=null">
+                and a.title = concat('%', #{reqDTO.title}, '%')
+            </if>
+            <if test="reqDTO.userName != null">
+                and b.user_name = concat('%', #{reqDTO.userName}, '%')
+            </if>
+            <if test="reqDTO.summary != null">
+                and a.summary = concat('%', #{reqDTO.summary}, '%')
+            </if>
+            <if test="reqDTO.status != null">
+                and  a.status = #{reqDTO.status}
+            </if>
+        </where>
+    </select>
+    <select id="selectNewsById" resultType="com.shanzhu.platform.entity.vo.NewsInfoVo">
+        SELECT a.id , a.title,a.cover ,a.summary,a.goods ,b.user_name,b.avatar,a.gmt_create ,a.gmt_modified
+        FROM  t_news a,sys_user b
+        WHERE a.user_id = b.id
+        and  a.id = #{id}
+
+    </select>
+    <select id="selectNewsByPageListByUserId" resultType="com.shanzhu.platform.entity.vo.NewsInfoVo">
+        SELECT a.id , a.title,a.cover ,a.summary,a.goods ,b.user_name,b.avatar,a.gmt_create ,a.gmt_modified
+        FROM  t_news a,sys_user b
+        WHERE a.user_id = b.id
+          and  a.user_id = #{userId}
+          and  a.status = #{status}
+        limit #{current}, #{limit}
+    </select>
+    <select id="selectNewsByPageListByUserIdTotal" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM  t_news a,sys_user b
+        WHERE a.user_id = b.id
+          and  a.user_id = #{userId}
+          and  a.status = #{status}
+    </select>
+
+
+</mapper>
